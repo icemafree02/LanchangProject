@@ -63,6 +63,13 @@ body{
   .total-price {
     color:black;
     padding: 20px;
+    text-align: center;
+    
+  }
+  .total-quantities{
+    color:darkgreen;
+    padding-left: 20px;
+    text-align:center
   }
   
   .menu-ordered-actions {

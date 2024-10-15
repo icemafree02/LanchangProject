@@ -35,6 +35,11 @@ const MenuOrdered = () => {
   const getTotalPrice = () => {
     return orderDetails.reduce((total, item) => total + item.Order_detail_price * item.Order_detail_quantity, 0);
   };
+  
+  const getTotalCartItems = () => {
+    return orderDetails.reduce((total, item) => total + item.Order_detail_quantity, 0);
+  };
+  
 
   const callStaff = async () => {
     try {
@@ -87,6 +92,9 @@ const MenuOrdered = () => {
               </div>
             ))}
             <div className="total-price">
+              <h3>จำนวนทั้งหมด: {getTotalCartItems()}</h3>
+            </div>
+            <div className='total-quantities'>
               <h3>ราคารวม: {getTotalPrice()} บาท</h3>
             </div>
             <div className='menu-ordered-actions'>
