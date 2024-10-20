@@ -7,36 +7,46 @@ import '../cart.css';
 const Cart = () => {
   const cartItems = useSelector(state => state.cart.items);
   const selectedTable = useSelector(state => state.table.selectedTable);
-  const orderId = useSelector(state => state.cart.orderId); // Assuming orderId is stored in the Redux store after table selection
+  const orderId = useSelector(state => state.cart.orderId);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Increase quantity handler
-  const handleIncrease = (id) => {
-    dispatch(increaseQuantity(id));
+  const handleIncrease = (item) => {
+    dispatch(increaseQuantity({
+      id: item.id,
+      type: item.type,
+      homeDelivery: item.homeDelivery,
+      additionalInfo: item.additionalInfo
+    }));
   };
 
-  // Decrease quantity handler
-  const handleDecrease = (id) => {
-    dispatch(decreaseQuantity(id));
+  const handleDecrease = (item) => {
+    dispatch(decreaseQuantity({
+      id: item.id,
+      type: item.type,
+      homeDelivery: item.homeDelivery,
+      additionalInfo: item.additionalInfo
+    }));
   };
 
-  // Remove item from cart handler
-  const handleRemove = (id) => {
-    dispatch(removeItemFromCart(id));
+  const handleRemove = (item) => {
+    dispatch(removeItemFromCart({
+      id: item.id,
+      type: item.type,
+      homeDelivery: item.homeDelivery,
+      additionalInfo: item.additionalInfo
+    }));
   };
 
-  // Calculate total price of items in cart
+
   const getTotalPrice = () => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-  // Calculate total number of items in cart
   const getTotalCartItems = () => {
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
-  // Get image source based on item type (noodle or menu)
   const getImageSource = (item) => {
     if (item.type === 'noodle') {
       return `http://localhost:5000/api/noodleimage/${item.id}`;
@@ -46,44 +56,38 @@ const Cart = () => {
     return '';
   };
 
-  // Handle order submission
   const handleOrderMenu = async () => {
+    const confirm = window.confirm('ยืนยันการสั่งอาหารหรือไม่')
     try {
-      if (!orderId) {
-        throw new Error('No active order. Please select a table first.');
+      if (confirm) {
+        const url = `http://localhost:5000/api/orders/${orderId}/add_items`;
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            cartItems: cartItems.map(item => ({
+              id: item.id,
+              type: item.type,
+              quantity: item.quantity,
+              price: item.price,
+              homeDelivery: item.homeDelivery || 0,
+              additionalInfo: item.additionalInfo || null,
+            })),
+          }),
+        });
+        const result = await response.json();
+        dispatch(clearCart());
+        navigate('/menu_order/cart/menu_ordered');
       }
-  
-      const url = `http://localhost:5000/api/orders/${orderId}/add_items`;
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          cartItems: cartItems.map(item => ({
-            id: item.id,
-            type: item.type,
-            quantity: item.quantity,
-            price: item.price,
-            homeDelivery: item.homeDelivery || 0,  // Take-home value
-            additionalInfo: item.additionalInfo || null,  // Additional info
-          })),
-        }),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to add items to order');
-      }
-  
-      const result = await response.json();
-      dispatch(clearCart());
-      navigate('/menu_order/cart/menu_ordered');
-    } catch (error) {
+    } 
+    catch (error) {
       console.error('Error processing order:', error);
       alert('Failed to process order. Please try again.');
     }
   };
-  
+
   return (
     <div>
       <header>
@@ -108,12 +112,12 @@ const Cart = () => {
                     {item.homeDelivery && <p className='takehomenote'>สั่งกลับบ้าน</p>}
                     {item.additionalInfo && <p className='additionalnote'>เพิ่มเติม : {item.additionalInfo}</p>}
                     <div className="cart-item-controls">
-                      <button className="quantity-btn" onClick={() => handleDecrease(item.id)}>-</button>
+                      <button className="quantity-btn" onClick={() => handleDecrease(item)}>-</button>
                       <span className="quantity">{item.quantity}</span>
-                      <button className="quantity-btn" onClick={() => handleIncrease(item.id)}>+</button>
+                      <button className="quantity-btn" onClick={() => handleIncrease(item)}>+</button>
                     </div>
                   </div>
-                  <button className="remove-btn" onClick={() => handleRemove(item.id)}>ลบ</button>
+                  <button className="remove-btn" onClick={() => handleRemove(item)}>ลบ</button>
                 </div>
               ))}
             </div>

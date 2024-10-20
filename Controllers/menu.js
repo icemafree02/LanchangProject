@@ -15,6 +15,21 @@ exports.read = async (req, res) => {
   }
 };
 
+exports.getOrder = async (req, res) => {
+  try {
+    db.query('SELECT * FROM `order` ', (error, results) => {
+      if (error) {
+        console.error('Error executing query:', error);
+        return res.status(500).send('Database query error');
+      }
+      res.status(200).json(results);
+    });
+  } catch (err) {
+    console.error('Server error:', err);
+    res.status(500).send('Server error');
+  }
+};
+
 exports.readID = async (req, res) => {
   const id = req.params.id;
   const query = (sql, params) => {
@@ -45,10 +60,8 @@ exports.order = (req, res) => {
   const { tableId, cartItems, orderId } = req.body;
 
   if (orderId) {
-    // Update existing order
     this.updateOrder(req, res);
   } else {
-    // Create new order
     const createOrderQuery = 'INSERT INTO `Order` (tables_id, Order_datetime, Order_status) VALUES (?, NOW(), ?)';
     const createOrderValues = [tableId, 'กำลังจัดเตรียม'];
 

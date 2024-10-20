@@ -25,7 +25,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start --host 0.0.0.0",
     "start-mobile": "set REACT_APP_HOST=0.0.0.0 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

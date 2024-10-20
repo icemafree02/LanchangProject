@@ -62,7 +62,7 @@ body{
   
   .total-price {
     color:black;
-    padding: 20px;
+    padding: 10px;
     text-align: center;
     
   }
@@ -95,5 +95,13 @@ body{
   }
   .callstaff:hover {
     background-color: rgb(39, 136, 70);
+  }
+
+  @media screen and (max-width: 600px) {
+    .back-to-menu-btn, .callstaff{
+      font-size: 13px;
+      padding: 10px 10px;
+      margin:15px;
+    }
   }
   

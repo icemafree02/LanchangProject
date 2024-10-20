@@ -14,7 +14,6 @@ function TableSelection() {
 
   const reserveTable = async (tableNumber) => { 
     try {
-      // Reserve the table
       const reserveResponse = await fetch(`http://localhost:5000/api/table/${tableNumber}`, {
         method: 'POST',
         headers: {
@@ -26,8 +25,6 @@ function TableSelection() {
       if (!reserveResponse.ok) {
         throw new Error('Failed to reserve table');
       }
-  
-      // Create a new order
       const createOrderResponse = await fetch('http://localhost:5000/api/orders', {
         method: 'POST',
         headers: {
@@ -42,9 +39,8 @@ function TableSelection() {
   
       const { orderId } = await createOrderResponse.json();
   
-      // Dispatch selected table and orderId
       dispatch(setSelectedTable(tableNumber));
-      dispatch(setOrderId(orderId)); // Add this line to store orderId in Redux
+      dispatch(setOrderId(orderId)); 
       navigate('/menu_order');
     } catch (error) {
       console.error('Error reserving table or creating order:', error);
@@ -56,8 +52,8 @@ function TableSelection() {
     reserveTable(tableNumber);
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <div>กำลังโหลด</div>;
+  if (error) return <div>เกิดข้อผิดพลาด : {error}</div>;
 
   return (
     <div>
@@ -80,8 +76,8 @@ function TableSelection() {
                 key={tables_number}
                 className={`box ${isReserved ? 'Reserved' : ''}`}
                 onClick={() => isAvailable && handleTableSelection(tables_number)}
-                disabled={isReserved || loading}  // Disable if reserved or loading
-                aria-label={isReserved ? `Table ${tables_number} is reserved` : `Select Table ${tables_number}`} // Accessibility
+                disabled={isReserved || loading} 
+                aria-label={isReserved ? `Table ${tables_number} is reserved` : `Select Table ${tables_number}`} 
               >
                 <div>{tables_number}</div>
                 {isReserved && <div className="reserved-text">-จองแล้ว</div>}

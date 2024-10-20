@@ -41,7 +41,7 @@ const MenuOrder = () => {
       console.error('Error fetching menu items:', error);
     }
   };
-
+  
   useEffect(() => {
     fetchInitialMenu();
   }, []);
@@ -111,7 +111,6 @@ const MenuOrder = () => {
           }
 
           const data = await response.json();
-
           if (category === 'beverage') {
             const beverageItems = data.filter(item => item.Menu_category === "เครื่องดื่ม");
             setFilteredItems({ noodles: [], menus: beverageItems });
